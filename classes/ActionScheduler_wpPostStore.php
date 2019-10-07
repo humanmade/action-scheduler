@@ -370,7 +370,7 @@ class ActionScheduler_wpPostStore extends ActionScheduler_Store {
 
 		if ( 'select' === $select_or_count ) {
 			$orderby_columns            = explode( ',', $query['orderby'] );
-			$orderby_columns_translated = [];
+			$orderby_columns_translated = array();
 			foreach ( $orderby_columns as $index => $column ) {
 				switch ( $column ) {
 					case 'hook':
