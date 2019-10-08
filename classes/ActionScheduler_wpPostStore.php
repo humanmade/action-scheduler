@@ -369,37 +369,28 @@ class ActionScheduler_wpPostStore extends ActionScheduler_Store {
 		}
 
 		if ( 'select' === $select_or_count ) {
-			$orderby_columns            = explode( ',', $query['orderby'] );
-			$orderby_columns_translated = array();
-			foreach ( $orderby_columns as $index => $column ) {
-				switch ( $column ) {
-					case 'hook':
-						$orderby_columns_translated[ $index ] = 'p.post_title';
-						break;
-					case 'ID':
-					case 'id':
-						$orderby_columns_translated[ $index ] = 'p.ID';
-						break;
-					case 'group':
-						$orderby_columns_translated[ $index ] = 't.name';
-						break;
-					case 'status':
-						$orderby_columns_translated[ $index ] = 'p.post_status';
-						break;
-					case 'modified':
-						$orderby_columns_translated[ $index ] = 'p.post_modified';
-						break;
-					case 'claim_id':
-						$orderby_columns_translated[ $index ] = 'p.post_password';
-						break;
-					case 'schedule':
-					case 'date':
-					default:
-						$orderby_columns_translated[ $index ] = 'p.post_date_gmt';
-						break;
-				}
+			switch ( $query['orderby'] ) {
+				case 'hook':
+					$orderby = 'p.post_title';
+					break;
+				case 'group':
+					$orderby = 't.name';
+					break;
+				case 'status':
+					$orderby = 'p.post_status';
+					break;
+				case 'modified':
+					$orderby = 'p.post_modified';
+					break;
+				case 'claim_id':
+					$orderby = 'p.post_password';
+					break;
+				case 'schedule':
+				case 'date':
+				default:
+					$orderby = 'p.post_date_gmt';
+					break;
 			}
-			$orderby = implode( ',', $orderby_columns_translated );
 			if ( 'ASC' === strtoupper( $query['order'] ) ) {
 				$order = 'ASC';
 			} else {
