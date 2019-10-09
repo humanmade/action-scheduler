@@ -399,13 +399,29 @@ class ActionScheduler_wpPostStore extends ActionScheduler_Store {
 						break;
 				}
 			}
-			$orderby = implode( ',', $orderby_columns_translated );
-			if ( 'ASC' === strtoupper( $query['order'] ) ) {
-				$order = 'ASC';
-			} else {
-				$order = 'DESC';
+
+			// Now derive an order for each 'orderby' clause.
+			$order_columns            = explode( ',', $query['order'] );
+			$order_columns_translated = array();
+			foreach ( $order_columns as $index => $ord ) {
+				if ( 'ASC' === strtoupper( $ord ) ) {
+					$order_columns_translated[ $index ] = 'ASC';
+				} else {
+					$order_columns_translated[ $index ] = 'DESC';
+				}
 			}
-			$sql .= " ORDER BY $orderby $order";
+			// Assemble order clause.
+			$sql   .= ' ORDER BY ';
+			$order = 'DESC';
+			foreach ( $orderby_columns_translated as $index => $orderby ) {
+				// Default to the last supplied order if the order list is shorter.
+				$order = isset( $order_columns_translated[ $index ] ) ? $order_columns_translated[ $index ] : $order;
+				$sql   .= " $order_columns_translated[$index] $order";
+				if ( $index < count($orderby_columns_translated) - 1 ) {
+					$sql .= ',';
+				}
+			}
+
 			if ( $query['per_page'] > 0 ) {
 				$sql .= " LIMIT %d, %d";
 				$sql_params[] = $query['offset'];
